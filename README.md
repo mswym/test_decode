@@ -2,5 +2,8 @@
 
 Some tips to check decoding algortihm for the open data.
 
-Use this repository for the brain data.
-https://github.com/UMCU-RIBS/ieeg-fmri-dataset-quickstart.git
+
+Plan to use these open data.
+- https://openneuro.org/datasets/ds003825/versions/1.1.2
+- https://github.com/UMCU-RIBS/ieeg-fmri-dataset-quickstart.git
+
