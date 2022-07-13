@@ -1,5 +1,8 @@
 import numpy as np
 import mne
+import io
+import pickle
+import matplotlib.pyplot as plt
 #follow the tutorial https://mne.tools/dev/auto_tutorials/intro/10_overview.html
 
 
@@ -8,7 +11,7 @@ def visualize_base(raw, fmax_psd=50, duration=5, n_channels=30):
     raw.plot_psd(fmax=fmax_psd)
     raw.plot(duration=duration, n_channels=n_channels)
 
-def ica_preprocess(raw:object, list_exclude:list, n_component=20, random_state=97, max_iter=800, f_visualize=False):
+def ica_preprocess(raw, list_exclude, n_component=20, random_state=97, max_iter=800, f_visualize=False):
     # set up and fit the ICA
     ica = mne.preprocessing.ICA(n_components=n_component, random_state=random_state, max_iter=max_iter)
     ica.fit(raw)
@@ -39,7 +42,13 @@ def cal_time_frequency(epochs,frequencies, n_cycles=2, decim=3, f_visualize=Fals
         power.plot(0)
     return power
 
+def run_eeglab_loading(path):
+
+    return 1
+
 if __name__ == '__main__':
+
+    ''' Examples from raw data
     path_dir = '../data/sub-01/eeg/'
     fname_eeg = 'sub-01_eeg_sub-01_task-rsvp_eeg.vhdr'
     list_exclude = [1]
@@ -54,9 +63,27 @@ if __name__ == '__main__':
 
     epochs = mne.Epochs(eeg, events, event_id=events_mapping, tmin=-0.2, tmax=0.5,
                         reject=reject_criteria, preload=True)
-
-
     del eeg, ica, events, events_mapping
+    '''
+
+    ''' 
+    Examples from eeg lab data
+    '''
+    path_dir = '../data/derivatives/eeglab/'
+    fname_eeg = 'sub-38_task-rsvp_continuous.set'
+    fname_save = 'power'
+    frequencies = np.arange(7, 20, 1)
+    tmin = -0.1
+    tmax = 0.8
+
+    eeglab_raw = mne.io.read_raw_eeglab(path_dir+fname_eeg)
+    events_from_annot, event_dict = mne.events_from_annotations(eeglab_raw)
+    epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=event_dict, tmin=tmin, tmax=tmax,
+                        preload=True)
     power = cal_time_frequency(epochs, frequencies)
+    with open('filename.pickle', 'wb') as f:
+        pickle.dump(power, f)
+
+
 
     print('finished')
