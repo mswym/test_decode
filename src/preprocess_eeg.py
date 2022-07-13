@@ -43,8 +43,14 @@ def cal_time_frequency(epochs,frequencies, n_cycles=2, decim=3, f_visualize=Fals
     return power
 
 def run_eeglab_loading(path):
-
-    return 1
+    eeglab_raw = mne.io.read_raw_eeglab(path)
+    events_from_annot, event_dict = mne.events_from_annotations(eeglab_raw)
+    epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=event_dict, tmin=tmin, tmax=tmax,
+                        return_itc=False, preload=True)
+    power = cal_time_frequency(epochs, frequencies)
+    with open(fname_save, 'wb') as f:
+        pickle.dump(power, f)
+    return power
 
 if __name__ == '__main__':
 
@@ -71,18 +77,21 @@ if __name__ == '__main__':
     '''
     path_dir = '../data/derivatives/eeglab/'
     fname_eeg = 'sub-38_task-rsvp_continuous.set'
-    fname_save = 'power'
-    frequencies = np.arange(7, 20, 1)
+    fname_save = 'sub-38_power.pickle'
+    frequencies = np.arange(7, 20, 5)
     tmin = -0.1
     tmax = 0.8
 
     eeglab_raw = mne.io.read_raw_eeglab(path_dir+fname_eeg)
     events_from_annot, event_dict = mne.events_from_annotations(eeglab_raw)
     epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=event_dict, tmin=tmin, tmax=tmax,
-                        preload=True)
+                        return_itc=False, preload=True)
     power = cal_time_frequency(epochs, frequencies)
-    with open('filename.pickle', 'wb') as f:
+    with open(fname_save, 'wb') as f:
         pickle.dump(power, f)
+
+    #with open('filename.pickle', 'rb') as f:
+    #    power = pickle.load(f)
 
 
 
