@@ -92,7 +92,7 @@ if __name__ == '__main__':
     #get average data
     power_mean = cal_time_frequency(epochs, frequencies)
     #get individual epoches
-    powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in epochs.__len__()]
+    powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in range(epochs.__len__())]
     with open(fname_save, 'wb') as f:
         pickle.dump((power_mean,powers), f)
 
