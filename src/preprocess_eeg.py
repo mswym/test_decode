@@ -36,21 +36,23 @@ def apply_ica(raw, ica, f_visualize=False):
 
 def cal_time_frequency(epochs,frequencies, n_cycles=2, decim=3, f_visualize=False):
     #frequencies = np.array(7,30,3)
-    power, itc = mne.time_frequency.tfr_morlet(epochs, n_cycles=n_cycles, return_itc=True,
+    power = mne.time_frequency.tfr_morlet(epochs, n_cycles=n_cycles, return_itc=False,
                                           freqs=frequencies, decim=decim)
     if f_visualize:
         power.plot(0)
-    return power, itc
+    return power
 
 def run_eeglab_loading(path):
-    eeglab_raw = mne.io.read_raw_eeglab(path)
+    eeglab_raw = mne.io.read_raw_eeglab(path_dir+fname_eeg)
     events_from_annot, event_dict = mne.events_from_annotations(eeglab_raw)
-    epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=event_dict, tmin=tmin, tmax=tmax,
+    epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=ind_event, tmin=tmin, tmax=tmax,
                         preload=True)
-    power = cal_time_frequency(epochs, frequencies)
+    #get average data
+    power_mean = cal_time_frequency(epochs, frequencies)
+    #get individual epoches
+    powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in epochs.__len__()]
     with open(fname_save, 'wb') as f:
-        pickle.dump(power, f)
-    return power
+        pickle.dump((power_mean,powers), f)
 
 if __name__ == '__main__':
 
@@ -80,18 +82,22 @@ if __name__ == '__main__':
     fname_save = 'sub-38_power.pickle'
     frequencies = np.arange(7, 30, 1)
     tmin = -0.1
-    tmax = 0.8
+    tmax = 1.0
+    ind_event = 1 #stimulus onset of this dataset.
 
     eeglab_raw = mne.io.read_raw_eeglab(path_dir+fname_eeg)
     events_from_annot, event_dict = mne.events_from_annotations(eeglab_raw)
-    epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=event_dict, tmin=tmin, tmax=tmax,
+    epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=ind_event, tmin=tmin, tmax=tmax,
                         preload=True)
-    power,itc = cal_time_frequency(epochs, frequencies)
+    #get average data
+    power_mean = cal_time_frequency(epochs, frequencies)
+    #get individual epoches
+    powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in epochs.__len__()]
     with open(fname_save, 'wb') as f:
-        pickle.dump((power,itc), f)
+        pickle.dump((power_mean,powers), f)
 
-    #with open('filename.pickle', 'rb') as f:
-    #    power = pickle.load(f)
+    #with open('sub-38_power.pickle', 'rb') as f:
+    #    power_mean,powers = pickle.load(f)
 
 
 
