@@ -90,11 +90,12 @@ if __name__ == '__main__':
     epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=ind_event, tmin=tmin, tmax=tmax,
                         preload=True)
     #get average data
-    power_mean = cal_time_frequency(epochs, frequencies)
+    #power_mean = cal_time_frequency(epochs, frequencies)
     #get individual epoches
     powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in range(epochs.__len__())]
+    del epochs, eeglab_raw, events_from_annot
     with open(fname_save, 'wb') as f:
-        pickle.dump((power_mean,powers), f)
+        pickle.dump(powers, f)
 
     #with open('sub-38_power.pickle', 'rb') as f:
     #    power_mean,powers = pickle.load(f)
