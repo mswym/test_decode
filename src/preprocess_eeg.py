@@ -3,8 +3,9 @@ import mne
 import io
 import pickle
 import matplotlib.pyplot as plt
-#follow the tutorial https://mne.tools/dev/auto_tutorials/intro/10_overview.html
 
+import yaml
+#follow the tutorial https://mne.tools/dev/auto_tutorials/intro/10_overview.html
 
 def visualize_base(raw, fmax_psd=50, duration=5, n_channels=30):
     #visualize
@@ -42,17 +43,24 @@ def cal_time_frequency(epochs,frequencies, n_cycles=2, decim=3, f_visualize=Fals
         power.plot(0)
     return power
 
-def run_eeglab_loading(path):
-    eeglab_raw = mne.io.read_raw_eeglab(path_dir+fname_eeg)
+def load_eeglab_timefreq_all(config,flag_num_powers=False, num_powers=1000):
+    frequencies = config['frequencies']
+    frequencies = np.arange(frequencies[0], frequencies[1], frequencies[2])
+
+    eeglab_raw = mne.io.read_raw_eeglab(config['path_dir']+config['fname_eeg'])
     events_from_annot, event_dict = mne.events_from_annotations(eeglab_raw)
-    epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=ind_event, tmin=tmin, tmax=tmax,
+    epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=config['ind_event'],
+                        tmin=config['tmin'], tmax=config['tmax'],
                         preload=True)
-    #get average data
-    power_mean = cal_time_frequency(epochs, frequencies)
+
     #get individual epoches
-    powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in epochs.__len__()]
-    with open(fname_save, 'wb') as f:
-        pickle.dump((power_mean,powers), f)
+    if flag_num_powers:
+        powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in range(num_powers)]
+    else:
+        powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in range(epochs.__len__())]
+    del epochs, eeglab_raw, events_from_annot
+
+    return powers
 
 if __name__ == '__main__':
 
@@ -77,28 +85,28 @@ if __name__ == '__main__':
     ''' 
     Examples from eeg lab data
     '''
-    path_dir = '../data/derivatives/eeglab/'
-    fname_eeg = 'sub-38_task-rsvp_continuous.set'
-    fname_save = 'sub-38_power.pickle'
-    frequencies = np.arange(7, 30, 1)
-    tmin = -0.1
-    tmax = 1.0
-    ind_event = 1 #stimulus onset of this dataset.
 
-    eeglab_raw = mne.io.read_raw_eeglab(path_dir+fname_eeg)
+    with open('../config/config_decoder.yaml', 'r') as f:
+        config = yaml.safe_load(f)
+
+    frequencies = config[0]['frequencies']
+    frequencies = np.arange(frequencies[0], frequencies[1], frequencies[2])
+
+    eeglab_raw = mne.io.read_raw_eeglab(config[0]['path_dir']+config[0]['fname_eeg'])
     events_from_annot, event_dict = mne.events_from_annotations(eeglab_raw)
-    epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=ind_event, tmin=tmin, tmax=tmax,
+    epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=config[0]['ind_event'],
+                        tmin=config[0]['tmin'], tmax=config[0]['tmax'],
                         preload=True)
     #get average data
     #power_mean = cal_time_frequency(epochs, frequencies)
     #get individual epoches
     powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in range(epochs.__len__())]
     del epochs, eeglab_raw, events_from_annot
-    with open(fname_save, 'wb') as f:
-        pickle.dump(powers, f)
+    with open(config[0]['fname_save'], 'wb') as f:
+        pickle.dump(powers, f, protocol=5)
 
     #with open('sub-38_power.pickle', 'rb') as f:
-    #    power_mean,powers = pickle.load(f)
+    #    powers = pickle.load(f)
 
 
 

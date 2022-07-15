@@ -1,0 +1,12 @@
+[
+  {
+    "path_dir": "../data/derivatives/eeglab/",
+    "fname_eeg": "sub-38_task-rsvp_continuous.set",
+    "fname_save": "sub-38_power.binary",
+    "frequencies":[7, 30, 1], #eeg time-frequency analysis. with np.arange()
+    "tmin":-0.1, #eeg time-frequency analysis. min time. in msec
+    "tmax": 1.0, #eeg time-frequency analysis. max time. in msec
+    "ind_event": 1 #stimulus onset of this dataset.
+  }
+
+]
