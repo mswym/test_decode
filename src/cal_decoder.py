@@ -18,7 +18,8 @@ def load_pretrained_model(path):
 
     return model
 
-def load_images(path):
+def load_imag_lists(config):
+    df_imgs = df.read_csv(config[1]['fname_imglist'])
     images = 1
     return images
 

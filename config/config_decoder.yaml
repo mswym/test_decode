@@ -1,5 +1,5 @@
 [
-  {
+  {# index 0. for eeg preprocessing
     "path_dir": "../data/derivatives/eeglab/",
     "fname_eeg": "sub-38_task-rsvp_continuous.set",
     "fname_save": "sub-38_power.binary",
@@ -8,5 +8,9 @@
     "tmax": 1.0, #eeg time-frequency analysis. max time. in msec
     "ind_event": 1 #stimulus onset of this dataset.
   }
+
+ {#index 1. for image loading
+    "fname_imglist": "../data/sub-38/sub-38_eeg_sub-38_task-rsvp_events.csv",
+ }
 
 ]
