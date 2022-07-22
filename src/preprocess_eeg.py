@@ -43,7 +43,7 @@ def cal_time_frequency(epochs,frequencies, n_cycles=2, decim=3, f_visualize=Fals
         power.plot(0)
     return power
 
-def load_eeglab_timefreq_all(config,flag_num_powers=False, num_powers=1000):
+def load_eeglab_timefreq_all(config):
     frequencies = config['frequencies']
     frequencies = np.arange(frequencies[0], frequencies[1], frequencies[2])
 
@@ -54,8 +54,8 @@ def load_eeglab_timefreq_all(config,flag_num_powers=False, num_powers=1000):
                         preload=True)
 
     #get individual epoches
-    if flag_num_powers:
-        powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in range(num_powers)]
+    if config['flag_num_powers']:
+        powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in range(config['num_powers'])]
     else:
         powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in range(epochs.__len__())]
     del epochs, eeglab_raw, events_from_annot
