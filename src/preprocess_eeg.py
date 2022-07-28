@@ -44,18 +44,18 @@ def cal_time_frequency(epochs,frequencies, n_cycles=2, decim=3, f_visualize=Fals
     return power
 
 def load_eeglab_timefreq_all(config):
-    frequencies = config['frequencies']
+    frequencies = config['eeg_preprocess']['frequencies']
     frequencies = np.arange(frequencies[0], frequencies[1], frequencies[2])
 
-    eeglab_raw = mne.io.read_raw_eeglab(config['path_dir']+config['fname_eeg'])
+    eeglab_raw = mne.io.read_raw_eeglab(config['eeg_preprocess']['path_dir']+config['eeg_preprocess']['fname_eeg'])
     events_from_annot, event_dict = mne.events_from_annotations(eeglab_raw)
-    epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=config['ind_event'],
-                        tmin=config['tmin'], tmax=config['tmax'],
+    epochs = mne.Epochs(eeglab_raw, events_from_annot, event_id=config['eeg_preprocess']['ind_event'],
+                        tmin=config['eeg_preprocess']['tmin'], tmax=config['eeg_preprocess']['tmax'],
                         preload=True)
 
     #get individual epoches
-    if config['flag_num_powers']:
-        powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in range(config['num_powers'])]
+    if config['eeg_preprocess']['flag_num_powers']:
+        powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in range(config['eeg_preprocess']['num_powers'])]
     else:
         powers = [cal_time_frequency(epochs.__getitem__(i), frequencies).data for i in range(epochs.__len__())]
     del epochs, eeglab_raw, events_from_annot

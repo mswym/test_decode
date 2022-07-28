@@ -240,6 +240,11 @@ class BigBiGAN(object):
     return dict(disc=disc_loss, enc=enc_loss, gen=gen_loss)
 
 if __name__ == '__main__':
+  module_path = 'https://tfhub.dev/deepmind/bigbigan-resnet50/1'  # ResNet-50
+  # module_path = 'https://tfhub.dev/deepmind/bigbigan-revnet50x4/1'  # RevNet-50 x4
+
+  # module = hub.Module(module_path, trainable=True, tags={'train'})  # training
+  module = hub.Module(module_path)  # inference
 
   # サンプル、再構成、ディスクリミネータスコア、損失の計算に使用するテンソルを作成する
   bigbigan = BigBiGAN(module)
@@ -273,7 +278,7 @@ if __name__ == '__main__':
   sess.run(init)
 
   ##test_images: [num_images,height,width,color_ch]
-  test_images_batch = test_images[:16]
+  batch = imgs_dataloader[0]
   _out_recons = sess.run(recon_x, feed_dict={enc_ph: test_images_batch})
   print('reconstructions shape:', _out_recons.shape)
 

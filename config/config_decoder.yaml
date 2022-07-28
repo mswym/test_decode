@@ -21,7 +21,10 @@
 
  "dnn":
       { #index 2. for dnn model parameters
-        "module_path": "https://tfhub.dev/deepmind/bigbigan-resnet50/1" #Pretrained BigBiGAN
+        "module_path": "https://tfhub.dev/deepmind/bigbigan-resnet50/1", #Pretrainsize_imged BigBiGAN
+        "size_batch": 10, #image batch size for the training
+        "size_img_w": 256, #input image size width
+        "size_img_h": 256 #input image size height
       }
 
 }
