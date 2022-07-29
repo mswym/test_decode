@@ -74,7 +74,7 @@ def compute_pretrained_model(config,imgs_dataloader):
     z_model = np.array(z_model)
     return z_model.reshape(z_model.shape[0] * z_model.shape[1], -1)
 
-def train_decoder(x_eeg_train, z_model):
+def train_decoder_ard(x_eeg_train, z_model):
     decoders = []
     for t in range(z_model.shape[1]):
         decoder = linear_model.ARDRegression()
@@ -82,11 +82,11 @@ def train_decoder(x_eeg_train, z_model):
         decoders.append(decoder)
     return decoders
 
-def test_decoder(y_eeg_train, z_model):
-    image_gen = 1
-    images_orig = 1
+def test_decoder(x_eeg_test, decoder, model):
+    z_gen = decoder.fit(x_eeg_test)
+    imgs = model.gen(z_gen)
 
-    return images_gen, images_orig
+    return imgs
 
 def run_dataframe_creation(config):
     return a
@@ -134,6 +134,4 @@ if __name__ == '__main__':
     df_imgs.to_pickle(config["save"]["fname_save_dataframe"])
 
 
-
-    a = 1
 
