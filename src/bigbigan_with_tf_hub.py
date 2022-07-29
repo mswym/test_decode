@@ -6,7 +6,7 @@ module_path = 'https://tfhub.dev/deepmind/bigbigan-resnet50/1'  # ResNet-50
 # module_path = 'https://tfhub.dev/deepmind/bigbigan-revnet50x4/1'  # RevNet-50 x4
 
 import io
-import IPython.display
+#import IPython.display
 import PIL.Image
 from pprint import pformat
 

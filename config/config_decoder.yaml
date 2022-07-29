@@ -1,5 +1,5 @@
 {"eeg_preprocess":
-      { # index 0. for eeg preprocessing
+      {
         "path_dir": "../data/derivatives/eeglab/",
         "fname_eeg": "sub-38_task-rsvp_continuous.set",
         "fname_save": "sub-38_power.binary",
@@ -11,7 +11,7 @@
         "num_powers": 10 #the number of epoches (used in spatiotemporal)
       },
  "data_training":
-      { #index 1. for image loading and eeg roi extraction
+      {
         "fname_imglist": "../data/sub-38/eeg/sub-38_task-rsvp_events.csv",
         "range_roi": 3, # in cell
         "start_roi": 0, # in cell
@@ -20,11 +20,15 @@
       },
 
  "dnn":
-      { #index 2. for dnn model parameters
+      {
         "module_path": "https://tfhub.dev/deepmind/bigbigan-resnet50/1", #Pretrainsize_imged BigBiGAN
         "size_batch": 10, #image batch size for the training
         "size_img_w": 256, #input image size width
         "size_img_h": 256 #input image size height
+      },
+  "save":
+      {
+       "fname_save_dataframe": "../data/results/dataframe.pickle", #dataframe save
       }
 
 }
